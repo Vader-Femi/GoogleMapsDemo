@@ -1,10 +1,7 @@
 package com.example.mapsdemo
 
-import android.app.Activity
-import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mapsdemo.databinding.ActivityMainBinding
 import com.example.mapsdemo.models.Place
@@ -15,24 +12,18 @@ const val EXTRA_USER_MAP = "EXTRA_USER_MAP"
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private lateinit var mapsAdapter: MapsAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        //Recycler View Setup
-        binding.rvMap.apply {
-            layoutManager = LinearLayoutManager(this@MainActivity)
-            adapter =
-                MapsAdapter(sampleData(), object : MapsAdapter.OnClickListener {
-                    override fun onItemClick(position: Int) {
-                        val intent = Intent(this@MainActivity, MapsActivity::class.java)
-                        intent.putExtra(EXTRA_USER_MAP, sampleData()[position])
-                        startActivity(intent)
-                    }
-                })
-        }
+
+        binding.rvMap.layoutManager = LinearLayoutManager(this@MainActivity)
+        mapsAdapter = MapsAdapter()
+        binding.rvMap.adapter = mapsAdapter
+        mapsAdapter.map = sampleData()
     }
 
     private fun sampleData(): List<UserMap> {
@@ -44,7 +35,6 @@ class MainActivity : AppCompatActivity() {
                     Place("Science Room", "The place to relax in Science", 6.467073, 3.199710)
                 )
             ),
-
             UserMap(
                 "Art",
                 listOf(
@@ -52,7 +42,6 @@ class MainActivity : AppCompatActivity() {
                     Place("Random Place", "Random Stuff", 6.465179, 3.201280)
                 )
             ),
-
             UserMap(
                 "Memories from University",
                 listOf(
@@ -132,8 +121,6 @@ class MainActivity : AppCompatActivity() {
                         -122.635
                     )
                 )
-            )
-        )
-
+            ))
     }
 }

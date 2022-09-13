@@ -14,9 +14,9 @@ import com.example.mapsdemo.databinding.ActivityMapsBinding
 import com.example.mapsdemo.models.UserMap
 import com.google.android.gms.maps.model.LatLngBounds
 
-const val TAG = "MapsActivity"
-
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
+
+    val TAG = "MapsActivity"
 
     private lateinit var mMap: GoogleMap
     private lateinit var binding: ActivityMapsBinding

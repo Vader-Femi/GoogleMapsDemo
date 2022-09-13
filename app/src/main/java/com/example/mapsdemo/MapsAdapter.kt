@@ -1,19 +1,35 @@
 package com.example.mapsdemo
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.AsyncListDiffer
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.example.mapsdemo.MapsAdapter.*
+import com.example.mapsdemo.MapsAdapter.MapsViewHolder
 import com.example.mapsdemo.databinding.ItemViewBinding
 import com.example.mapsdemo.models.UserMap
 
-class MapsAdapter(val userMaps: List<UserMap>, val onClickListener: OnClickListener) :
-    RecyclerView.Adapter<MapsViewHolder>() {
+class MapsAdapter() : RecyclerView.Adapter<MapsViewHolder>() {
 
-    interface OnClickListener{
-        fun onItemClick(position: Int)
-    }
     inner class MapsViewHolder(val binding: ItemViewBinding) : RecyclerView.ViewHolder(binding.root)
+
+    private val differCallback = object: DiffUtil.ItemCallback<UserMap>() {
+        override fun areItemsTheSame(oldItem: UserMap, newItem: UserMap): Boolean {
+            return oldItem.title == newItem.title
+        }
+
+        override fun areContentsTheSame(oldItem: UserMap, newItem: UserMap): Boolean {
+            return oldItem == newItem
+        }
+
+    }
+
+    private val differ = AsyncListDiffer(this, differCallback)
+
+    var map: List<UserMap>
+        get() = differ.currentList
+        set(value) {differ.submitList(value)}
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MapsViewHolder {
         return MapsViewHolder(
@@ -26,15 +42,18 @@ class MapsAdapter(val userMaps: List<UserMap>, val onClickListener: OnClickListe
     }
 
     override fun onBindViewHolder(holderMaps: MapsViewHolder, position: Int) {
-        holderMaps.binding.apply {
-            tvUserMap.text = userMaps[position].title
-            tvUserMap.setOnClickListener {
-                onClickListener.onItemClick(position)
+        holderMaps.binding.tvUserMap.apply {
+            val userMap = map[position]
+            text = userMap.title
+
+            setOnClickListener {
+                val intent = Intent(context, MapsActivity::class.java)
+                intent.putExtra(EXTRA_USER_MAP, userMap)
+                context.startActivity(intent)
             }
         }
 
     }
 
-    override fun getItemCount() = userMaps.size
-
+    override fun getItemCount() = map.size
 }
